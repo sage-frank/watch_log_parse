@@ -14,3 +14,4 @@ encoding_rs = "0.8"
 time = { version = "0.3", features = ["macros"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+globset = "0.4"

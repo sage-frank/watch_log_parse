@@ -27,12 +27,9 @@ fn main() -> anyhow::Result<()> {
     let db = state::Db::open(&cfg.db_path)?;
 
     loop {
-        let paths = match scanner::scan_csv_paths(&cfg.share_root) {
+        let paths = match scanner::scan_csv_paths(&cfg.share_root, &cfg.target_glob) {
             Ok(v) => v,
-            Err(e) => {
-                warn!("scan error: {}", e);
-                Vec::<PathBuf>::new()
-            }
+            Err(e) => { warn!("scan error: {}", e); Vec::<PathBuf>::new() }
         };
 
         for p in paths {
@@ -106,9 +103,7 @@ fn main() -> anyhow::Result<()> {
             };
             if let Err(e) = db.upsert_file_state(&fs) {
                 error!("upsert state error {}: {}", path_str, e);
-            } else {
-                info!("{} inserted {}", path_str, inserted);
-            }
+            } else { info!("{} parsed {} inserted {}", path_str, rr.new_records, inserted); }
         }
         std::thread::sleep(std::time::Duration::from_secs(cfg.poll_interval_secs));
     }
